@@ -56,9 +56,11 @@ public class MoviesDiscoveryFragment extends Fragment {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        if (id == R.id.action_refresh) {
-            updateMovies();
-            return true;
+        switch(id){
+            case R.id.action_most_popular :  updateMovies(getString(R.string.action_most_popular));
+                break;
+            case R.id.action_highest_rated :  updateMovies(getString(R.string.action_highest_rated));
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -97,23 +99,27 @@ public class MoviesDiscoveryFragment extends Fragment {
         return rootView;
     }
 
-    private void updateMovies() {
+    /**
+     * Updates the content of the movies discovery based on the selected sort by
+     * option by the User.
+     *
+     * @param sortById id of the action to fetch/sort the movies
+     *                 (for example: most popular, highest-rated)
+     */
+    private void updateMovies(String sortById) {
         FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-        /*
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String location = prefs.getString(getString(R.string.pref_location_key),
-                getString(R.string.pref_location_default));
-        */
-
-        fetchMoviesTask.execute("popularity");
+        fetchMoviesTask.execute(sortById);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        updateMovies();
+        updateMovies(getString(R.string.action_most_popular));
     }
 
+    /**
+     * Obtains the movies data from the themoviedb.org API and populates the grid view.
+     */
     public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<MovieEntry>> {
 
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
@@ -164,18 +170,20 @@ public class MoviesDiscoveryFragment extends Fragment {
                 final String MOST_POPULAR = "popularity.desc";
                 final String HIGHEST_RATED = "vote_average.desc";
 
-                Uri builtUri;
+                Uri builtUri = null;
 
-                if(params[0].equalsIgnoreCase("popularity")) {
+                if(params[0].equalsIgnoreCase(getString(R.string.action_most_popular))) {
                     builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
                             .appendQueryParameter(API_KEY_PARAM, getString(R.string.API_KEY))
                             .appendQueryParameter(SORT_BY_PARAM, MOST_POPULAR)
                             .build();
-                } else {
+                } else if (params[0].equalsIgnoreCase(getString(R.string.action_highest_rated))){
                     builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
                             .appendQueryParameter(API_KEY_PARAM, getString(R.string.API_KEY))
                             .appendQueryParameter(SORT_BY_PARAM, HIGHEST_RATED)
                             .build();
+                } else {
+                    Log.e(LOG_TAG, "Error: Invalid movie [Sort By] option has been provided.");
                 }
 
                 URL url = new URL(builtUri.toString());
@@ -209,7 +217,7 @@ public class MoviesDiscoveryFragment extends Fragment {
                 moviesJsonStr = buffer.toString();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
+                // If the code didn't successfully get the movies data, there's no point
                 // to parse it.
                 return null;
             } finally {
