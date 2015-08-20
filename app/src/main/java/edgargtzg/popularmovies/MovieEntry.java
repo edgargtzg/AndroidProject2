@@ -52,7 +52,7 @@ public class MovieEntry implements Parcelable {
             mOriginalTitle = (String)movieJsonObject.get(ORIGINAL_TITLE);
             mMoviePoster = (String)movieJsonObject.get(MOVIE_POSTER);
             mPlotSynopsis = (String)movieJsonObject.get(PLOT_SYNOPSIS);
-            mUserRating = (String)movieJsonObject.get(USER_RATING);
+            mUserRating = movieJsonObject.get(USER_RATING).toString();
             mReleaseDate = (String)movieJsonObject.get(RELEASE_DATE);
         } catch (JSONException e) {
             e.printStackTrace();

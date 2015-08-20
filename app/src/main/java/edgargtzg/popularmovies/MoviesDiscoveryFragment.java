@@ -1,10 +1,10 @@
 package edgargtzg.popularmovies;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 /**
  * Fragment contains the popular movies discovery features.
  */
-public class MoviesDiscoveryFragment extends Fragment{
+public class MoviesDiscoveryFragment extends Fragment {
 
     private MoviePostersAdapter mMoviePosterAdapter;
 
@@ -141,10 +141,6 @@ public class MoviesDiscoveryFragment extends Fragment{
 
         @Override
         protected ArrayList<MovieEntry> doInBackground(String... params) {
-
-            // http://api.themoviedb.org/3/discover/movie?api_key=49579180255afdeba50f6eb136925a56&sort_by=popularity.desc
-
-            // http://api.themoviedb.org/3/discover/movie?api_key=49579180255afdeba50f6eb136925a56&sort_by=vote_average.desc
 
             // Verify size of params.
             if (params.length == 0) {
