@@ -6,7 +6,7 @@
 
     <!-- Menu label to fetch updated weather info from the server -->
     <string name="action_refresh" translatable="false">Refresh</string>
-    <string name="API_KEY" translatable="false">49579180255afdeba50f6eb136925a56</string>
+    <string name="API_KEY" translatable="false"></string>
     <string name="movie_poster_api_call" translatable="false">http://image.tmdb.org/t/p/w185/</string>
 
 </resources>
