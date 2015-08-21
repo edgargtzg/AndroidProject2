@@ -25,7 +25,7 @@ public class SettingsActivity extends PreferenceActivity {
             super.onCreate(savedInstanceState);
 
             // Load the preferences from an XML resource
-            addPreferencesFromResource(R.xml.preference_movies_sortby);
+            addPreferencesFromResource(R.xml.preference_discover_movies);
         }
     }
 }

@@ -1,21 +1,31 @@
 <resources>
 
-    <string name="app_name">Popular Movies</string>
+    <!-- REPLACE ME: API KEY for themoviedb API. -->
+    <string name="themoviedb_api_key" translatable="false">49579180255afdeba50f6eb136925a56</string>
+
+    <!-- Application name-->
+    <string name="app_name" translatable="true">Popular Movies</string>
+    <!-- Title Discover Movies activity.-->
+    <string name="title_activity_discover_movies" translatable="true">Discover Movies</string>
 
     <!-- Menu label for settings-->
     <string name="action_settings">Settings</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_settings" translatable="true">Settings</string>
 
+    <!-- Preference category name for discovery settings -->
+    <string name="pref_category_discover_movies" translatable="true">Discover Movies</string>
     <!-- Preference to fetch most popular movies from the server -->
-    <string name="pref_most_popular" translatable="false">Most Popular</string>
+    <string name="pref_most_popular" translatable="true">Most Popular</string>
     <!-- Preference to fetch highest rated movies from the server -->
-    <string name="pref_highest_rated" translatable="false">Highest-Rated</string>
+    <string name="pref_highest_rated" translatable="true">Highest-Rated</string>
+    <!-- Preference key for the Sort By list. -->
+    <string name="pref_sortBy_list_key" translatable="false">list_preference</string>
+    <!-- Preference title for the Sort By list. -->
+    <string name="pref_sortBy_list_title" translatable="true">Sort Order</string>
+    <!-- Preference dialog title for the Sort By list. -->
+    <string name="pref_sortBy_list_dialog_title" translatable="true">Movies</string>
 
-    <string name="pref_sortBy_key" translatable="false">list_preference</string>
-
-    <string name="API_KEY" translatable="false">49579180255afdeba50f6eb136925a56</string>
-    <string name="movie_poster_api_call" translatable="false">http://image.tmdb.org/t/p/w185/</string>
-
-
+    <!-- themoviedb API URL to retrieve movie poster image. -->
+    <string name="themoviedb_poster_api_call" translatable="false">http://image.tmdb.org/t/p/w185/</string>
 
 </resources>

@@ -9,7 +9,7 @@ import org.json.JSONObject;
 /**
  * Class which contains details of a movie.
  */
-public class MovieEntry implements Parcelable {
+public class MovieItem implements Parcelable {
 
     private final String ORIGINAL_TITLE = "original_title";
     private final String MOVIE_POSTER = "poster_path";
@@ -23,11 +23,11 @@ public class MovieEntry implements Parcelable {
     private String mUserRating = "";
     private String mReleaseDate = "";
 
-    public MovieEntry(JSONObject movieJsonObject) {
+    public MovieItem(JSONObject movieJsonObject) {
         parseMovieData(movieJsonObject);
     }
 
-    protected MovieEntry(Parcel in) {
+    protected MovieItem(Parcel in) {
         mOriginalTitle = in.readString();
         mMoviePoster = in.readString();
         mPlotSynopsis = in.readString();
@@ -35,15 +35,15 @@ public class MovieEntry implements Parcelable {
         mReleaseDate = in.readString();
     }
 
-    public static final Creator<MovieEntry> CREATOR = new Creator<MovieEntry>() {
+    public static final Creator<MovieItem> CREATOR = new Creator<MovieItem>() {
         @Override
-        public MovieEntry createFromParcel(Parcel in) {
-            return new MovieEntry(in);
+        public MovieItem createFromParcel(Parcel in) {
+            return new MovieItem(in);
         }
 
         @Override
-        public MovieEntry[] newArray(int size) {
-            return new MovieEntry[size];
+        public MovieItem[] newArray(int size) {
+            return new MovieItem[size];
         }
     };
 

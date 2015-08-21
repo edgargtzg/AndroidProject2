@@ -4,14 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -33,11 +29,11 @@ import java.util.ArrayList;
 /**
  * Fragment contains the popular movies discovery features.
  */
-public class MoviesDiscoveryFragment extends Fragment {
+public class DiscoverMoviesFragment extends Fragment {
 
-    private MoviePostersAdapter mMoviePosterAdapter;
+    private MovieItemAdapter mMoviePosterAdapter;
 
-    public MoviesDiscoveryFragment() {
+    public DiscoverMoviesFragment() {
     }
 
     @Override
@@ -48,47 +44,20 @@ public class MoviesDiscoveryFragment extends Fragment {
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_movies_discovery, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(getActivity(), SettingsActivity.class);
-            intent.putExtra(
-                    PreferenceActivity.EXTRA_SHOW_FRAGMENT,
-                    SettingsActivity.PrefsMoviesSortBy.class.getName());
-            intent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
-            startActivity(intent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // The MoviePostersAdapter will take data from a source and
+        // The MovieItemAdapter will take data from a source and
         // use it to populate the GridView it's attached to.
 
         mMoviePosterAdapter =
-                new MoviePostersAdapter(
+                new MovieItemAdapter(
                         getActivity(), // The current context (this activity)
-                        R.layout.grid_item_movie_poster, // The name of the grid item ID.
-                        new ArrayList<MovieEntry>());
+                        R.layout.movie_grid_item_imageview, // The name of the grid item ID.
+                        new ArrayList<MovieItem>());
 
 
-        View rootView = inflater.inflate(R.layout.movies_discovery_layout, container, false);
+        View rootView = inflater.inflate(R.layout.discover_movies_layout, container, false);
 
 
         // Get a reference to the GridView, and attach this adapter to it.
@@ -97,9 +66,9 @@ public class MoviesDiscoveryFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                MovieEntry movieEntry = mMoviePosterAdapter.getItem(position);
+                MovieItem movieItem = mMoviePosterAdapter.getItem(position);
                 Intent intent = new Intent(getActivity(), MovieDetailsActivity.class)
-                        .putExtra(MovieEntry.class.getCanonicalName(), movieEntry);
+                        .putExtra(MovieItem.class.getCanonicalName(), movieItem);
                 startActivity(intent);
             }
         });
@@ -127,39 +96,21 @@ public class MoviesDiscoveryFragment extends Fragment {
         updateMovies(
                 PreferenceManager.getDefaultSharedPreferences(
                         getActivity()).getString(
-                        getString(R.string.pref_sortBy_key),
+                        getString(R.string.pref_sortBy_list_key),
                         getString(R.string.pref_most_popular)));
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        /*
-        updateMovies(
-                PreferenceManager.getDefaultSharedPreferences(
-                        getActivity()).getString(
-                        getString(R.string.pref_sortBy_key),
-                        getString(R.string.pref_most_popular)));
-                        */
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     /**
      * Obtains the movies data from the themoviedb.org API and populates the grid view.
      */
-    public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<MovieEntry>> {
+    public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<MovieItem>> {
 
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
         /**
          * Obtains the movie entries data from the JSON response from themoviedb.org API.
          */
-        private ArrayList<MovieEntry> getMovieEntriesFromJson(String movieDataJsonStr)
+        private ArrayList<MovieItem> getMovieEntriesFromJson(String movieDataJsonStr)
                 throws JSONException {
 
             // Name of the movie list entry.
@@ -167,18 +118,18 @@ public class MoviesDiscoveryFragment extends Fragment {
             JSONObject moviesDataJson = new JSONObject(movieDataJsonStr);
             JSONArray moviesArray = moviesDataJson.getJSONArray(MOVIE_LIST);
 
-            ArrayList<MovieEntry> movieEntries = new ArrayList<MovieEntry>(moviesArray.length());
+            ArrayList<MovieItem> movieEntries = new ArrayList<MovieItem>(moviesArray.length());
 
             // Create movie entries
             for (int i = 0; i < moviesArray.length(); i++) {
-                movieEntries.add(i,new MovieEntry(moviesArray.getJSONObject(i)));
+                movieEntries.add(i,new MovieItem(moviesArray.getJSONObject(i)));
             }
 
             return movieEntries;
         }
 
         @Override
-        protected ArrayList<MovieEntry> doInBackground(String... params) {
+        protected ArrayList<MovieItem> doInBackground(String... params) {
 
             // Verify size of params.
             if (params.length == 0) {
@@ -206,12 +157,12 @@ public class MoviesDiscoveryFragment extends Fragment {
 
                 if(params[0].equalsIgnoreCase(getString(R.string.pref_most_popular))) {
                     builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
-                            .appendQueryParameter(API_KEY_PARAM, getString(R.string.API_KEY))
+                            .appendQueryParameter(API_KEY_PARAM, getString(R.string.themoviedb_api_key))
                             .appendQueryParameter(SORT_BY_PARAM, MOST_POPULAR)
                             .build();
                 } else if (params[0].equalsIgnoreCase(getString(R.string.pref_highest_rated))){
                     builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
-                            .appendQueryParameter(API_KEY_PARAM, getString(R.string.API_KEY))
+                            .appendQueryParameter(API_KEY_PARAM, getString(R.string.themoviedb_api_key))
                             .appendQueryParameter(SORT_BY_PARAM, HIGHEST_RATED)
                             .build();
                 } else {
@@ -277,11 +228,11 @@ public class MoviesDiscoveryFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<MovieEntry> result) {
+        protected void onPostExecute(ArrayList<MovieItem> result) {
             if (result != null) {
                 mMoviePosterAdapter.clear();
-                for (MovieEntry movieEntry : result) {
-                    mMoviePosterAdapter.add(movieEntry);
+                for (MovieItem movieItem : result) {
+                    mMoviePosterAdapter.add(movieItem);
                 }
                 // New data is back from the server.  Hooray!
             }
