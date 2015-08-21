@@ -17,11 +17,11 @@ public class MovieEntry implements Parcelable {
     private final String USER_RATING = "vote_average";
     private final String RELEASE_DATE = "release_date";
 
-    private String mOriginalTitle;
-    private String mMoviePoster;
-    private String mPlotSynopsis;
-    private String mUserRating;
-    private String mReleaseDate;
+    private String mOriginalTitle = "";
+    private String mMoviePoster = "";
+    private String mPlotSynopsis = "";
+    private String mUserRating = "";
+    private String mReleaseDate = "";
 
     public MovieEntry(JSONObject movieJsonObject) {
         parseMovieData(movieJsonObject);
@@ -55,6 +55,8 @@ public class MovieEntry implements Parcelable {
             mUserRating = movieJsonObject.get(USER_RATING).toString();
             mReleaseDate = (String)movieJsonObject.get(RELEASE_DATE);
         } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (ClassCastException e) {
             e.printStackTrace();
         }
 

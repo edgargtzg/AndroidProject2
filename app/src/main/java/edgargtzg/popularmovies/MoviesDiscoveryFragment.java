@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -47,7 +49,8 @@ public class MoviesDiscoveryFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.discoveryfragment, menu);
+        inflater.inflate(R.menu.menu_movies_discovery, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -56,12 +59,18 @@ public class MoviesDiscoveryFragment extends Fragment {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        switch(id){
-            case R.id.action_most_popular :  updateMovies(getString(R.string.action_most_popular));
-                break;
-            case R.id.action_highest_rated :  updateMovies(getString(R.string.action_highest_rated));
-                break;
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Intent intent = new Intent(getActivity(), SettingsActivity.class);
+            intent.putExtra(
+                    PreferenceActivity.EXTRA_SHOW_FRAGMENT,
+                    SettingsActivity.PrefsMoviesSortBy.class.getName());
+            intent.putExtra(PreferenceActivity.EXTRA_NO_HEADERS, true);
+            startActivity(intent);
+            return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -114,7 +123,30 @@ public class MoviesDiscoveryFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        updateMovies(getString(R.string.action_most_popular));
+
+        updateMovies(
+                PreferenceManager.getDefaultSharedPreferences(
+                        getActivity()).getString(
+                        getString(R.string.pref_sortBy_key),
+                        getString(R.string.pref_most_popular)));
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        /*
+        updateMovies(
+                PreferenceManager.getDefaultSharedPreferences(
+                        getActivity()).getString(
+                        getString(R.string.pref_sortBy_key),
+                        getString(R.string.pref_most_popular)));
+                        */
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     /**
@@ -172,18 +204,18 @@ public class MoviesDiscoveryFragment extends Fragment {
 
                 Uri builtUri = null;
 
-                if(params[0].equalsIgnoreCase(getString(R.string.action_most_popular))) {
+                if(params[0].equalsIgnoreCase(getString(R.string.pref_most_popular))) {
                     builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
                             .appendQueryParameter(API_KEY_PARAM, getString(R.string.API_KEY))
                             .appendQueryParameter(SORT_BY_PARAM, MOST_POPULAR)
                             .build();
-                } else if (params[0].equalsIgnoreCase(getString(R.string.action_highest_rated))){
+                } else if (params[0].equalsIgnoreCase(getString(R.string.pref_highest_rated))){
                     builtUri = Uri.parse(MOVIEDB_BASE_URL).buildUpon()
                             .appendQueryParameter(API_KEY_PARAM, getString(R.string.API_KEY))
                             .appendQueryParameter(SORT_BY_PARAM, HIGHEST_RATED)
                             .build();
                 } else {
-                    Log.e(LOG_TAG, "Error: Invalid movie [Sort By] option has been provided.");
+                    Log.e(LOG_TAG, "Error: Invalid preference option to sort movies.");
                 }
 
                 URL url = new URL(builtUri.toString());
