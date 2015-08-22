@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2015 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package edgargtzg.popularmovies;
 
 import android.content.Intent;
@@ -27,40 +43,43 @@ import java.util.ArrayList;
 
 
 /**
- * Fragment contains the popular movies discovery features.
+ * Fragment contains the discover movies functionality which populates the view based on the
+ * selected sort order in Settings.
  */
 public class DiscoverMoviesFragment extends Fragment {
 
+    /**
+     * Adapter to populate grid view with movie items.
+     */
     private MovieItemAdapter mMoviePosterAdapter;
 
+    /**
+     * Default constructor.
+     */
     public DiscoverMoviesFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Add this line in order for this fragment to handle menu events.
+        // Fragment to handle menu events.
         setHasOptionsMenu(true);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         // The MovieItemAdapter will take data from a source and
         // use it to populate the GridView it's attached to.
-
         mMoviePosterAdapter =
                 new MovieItemAdapter(
                         getActivity(), // The current context (this activity)
-                        R.layout.grid_movie_item, // The name of the grid item ID.
+                        R.layout.grid_movie_item,
                         new ArrayList<MovieItem>());
-
 
         View rootView = inflater.inflate(R.layout.fragment_discover_movies, container, false);
 
-
-        // Get a reference to the GridView, and attach this adapter to it.
+        // Get a reference to the GridView, and attach the adapter to it.
         GridView gridView  = (GridView) rootView.findViewById(R.id.movies_discovery_gridview);
         gridView.setAdapter(mMoviePosterAdapter);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -72,16 +91,14 @@ public class DiscoverMoviesFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-
         return rootView;
     }
 
     /**
-     * Updates the content of the movies discovery based on the selected sort by
+     * Updates the content of the view based on the selected sort by
      * option by the User.
      *
-     * @param sortById id of the action to fetch/sort the movies
+     * @param sortById id of the action to sort the movies
      *                 (for example: most popular, highest-rated)
      */
     private void updateMovies(String sortById) {
@@ -92,45 +109,49 @@ public class DiscoverMoviesFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-        updateMovies(
-                PreferenceManager.getDefaultSharedPreferences(
+        updateMovies(PreferenceManager.getDefaultSharedPreferences(
                         getActivity()).getString(
                         getString(R.string.pref_sortBy_list_key),
                         getString(R.string.pref_most_popular)));
     }
 
     /**
-     * Obtains the movies data from the themoviedb.org API and populates the grid view.
+     * Obtains the movies data from the themoviedb.org API and populates the view.
      */
     public class FetchMoviesTask extends AsyncTask<String, Void, ArrayList<MovieItem>> {
 
+        /**
+         * Log identifier for the class.
+         */
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
         /**
-         * Obtains the movie entries data from the JSON response from themoviedb.org API.
+         * Extracts the movie items data from the JSON response from themoviedb.org API.
+         *
+         * @param movieDataJsonStr JSON response from themoviedb.org.
+         * @return list of MovieItems with data.
+         * @throws JSONException if an error occurs.
          */
         private ArrayList<MovieItem> getMovieEntriesFromJson(String movieDataJsonStr)
                 throws JSONException {
 
-            // Name of the movie list entry.
+            // Delimiter for movies items.
             final String MOVIE_LIST = "results";
+            // Obtains the list of movies.
             JSONObject moviesDataJson = new JSONObject(movieDataJsonStr);
             JSONArray moviesArray = moviesDataJson.getJSONArray(MOVIE_LIST);
-
-            ArrayList<MovieItem> movieEntries = new ArrayList<MovieItem>(moviesArray.length());
+            // List which will contain the populated move items.
+            ArrayList<MovieItem> movieEntries = new ArrayList<>(moviesArray.length());
 
             // Create movie entries
             for (int i = 0; i < moviesArray.length(); i++) {
                 movieEntries.add(i,new MovieItem(moviesArray.getJSONObject(i)));
             }
-
             return movieEntries;
         }
 
         @Override
         protected ArrayList<MovieItem> doInBackground(String... params) {
-
             // Verify size of params.
             if (params.length == 0) {
                 return null;
@@ -145,7 +166,7 @@ public class DiscoverMoviesFragment extends Fragment {
             String moviesJsonStr = null;
 
             try {
-                // Construct the URL for the themoviedb.org query
+                // Construct the URL for the themoviedb.org query.
                 final String MOVIEDB_BASE_URL =
                         "http://api.themoviedb.org/3/discover/movie?";
                 final String API_KEY_PARAM = "api_key";
@@ -169,7 +190,13 @@ public class DiscoverMoviesFragment extends Fragment {
                     Log.e(LOG_TAG, "Error: Invalid preference option to sort movies.");
                 }
 
-                URL url = new URL(builtUri.toString());
+                URL url;
+                if (builtUri != null) {
+                    url = new URL(builtUri.toString());
+                } else {
+                    Log.e(LOG_TAG, "Error: Invalid URL for themoviedb.org.");
+                    return null;
+                }
 
                 // Create the request to themoviedb.org, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -178,9 +205,9 @@ public class DiscoverMoviesFragment extends Fragment {
 
                 // Read the input stream into a String
                 InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
+                StringBuilder buffer = new StringBuilder();
                 if (inputStream == null) {
-                    // Nothing to do.
+                    Log.w(LOG_TAG, "No movie data has been fetched from themoviedb.org.");
                     return null;
                 }
                 reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -195,6 +222,7 @@ public class DiscoverMoviesFragment extends Fragment {
 
                 if (buffer.length() == 0) {
                     // Stream was empty.  No point in parsing.
+                    Log.w(LOG_TAG, "No movie data has been fetched from themoviedb.org.");
                     return null;
                 }
                 moviesJsonStr = buffer.toString();
@@ -222,7 +250,6 @@ public class DiscoverMoviesFragment extends Fragment {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
-
             // This will only happen if there was an error getting or parsing the forecast.
             return null;
         }
@@ -234,7 +261,6 @@ public class DiscoverMoviesFragment extends Fragment {
                 for (MovieItem movieItem : result) {
                     mMoviePosterAdapter.add(movieItem);
                 }
-                // New data is back from the server.  Hooray!
             }
         }
     }

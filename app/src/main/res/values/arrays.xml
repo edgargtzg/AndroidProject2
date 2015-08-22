@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Movies Sort Order options and values-->
     <string-array
         name="movies_sortBy_options">
         <item>@string/pref_most_popular</item>

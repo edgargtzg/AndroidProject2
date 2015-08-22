@@ -2,6 +2,7 @@
 <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:contentDescription="@string/placeholder_movie_poster"
     android:gravity="center_vertical"
     android:id="@+id/grid_item_movie_poster_imageview">
 </ImageView>
