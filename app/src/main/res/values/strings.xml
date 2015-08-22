@@ -1,6 +1,6 @@
 <resources>
     <!-- REPLACE ME: API KEY for themoviedb API. -->
-    <string name="themoviedb_api_key" translatable="false">49579180255afdeba50f6eb136925a56</string>
+    <string name="themoviedb_api_key" translatable="false"></string>
 
     <!-- Application name-->
     <string name="app_name" translatable="true">Popular Movies</string>
