@@ -18,6 +18,7 @@ package edgargtzg.popularmovies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -51,7 +52,8 @@ import java.util.ArrayList;
  * Fragment contains the discover movies functionality which populates the view based on the
  * selected sort order in Settings.
  */
-public class DiscoverMoviesFragment extends Fragment {
+public class DiscoverMoviesFragment extends Fragment
+        implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     /**
      * Adapter to populate grid view with movie items.
@@ -118,6 +120,11 @@ public class DiscoverMoviesFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        // Registers the preference listener to populate movies.
+        PreferenceManager.getDefaultSharedPreferences(
+                getActivity()).registerOnSharedPreferenceChangeListener(this);
+
         return rootView;
     }
 
@@ -147,6 +154,15 @@ public class DiscoverMoviesFragment extends Fragment {
         outState.putParcelableArrayList(MOVIE_LIST_KEY, mListOfMovies);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // Unregisters the preference listener to populate movies.
+        PreferenceManager.getDefaultSharedPreferences(
+                getActivity()).unregisterOnSharedPreferenceChangeListener(this);
+    }
+
     /**
      * Checks if there is any network available.
      * Based on a stackoverflow snippet.
@@ -158,6 +174,11 @@ public class DiscoverMoviesFragment extends Fragment {
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        updateMovies(sharedPreferences.getString(key,getString(R.string.pref_most_popular)));
     }
 
     /**
