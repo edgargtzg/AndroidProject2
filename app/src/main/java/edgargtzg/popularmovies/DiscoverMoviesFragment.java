@@ -16,18 +16,23 @@
 
 package edgargtzg.popularmovies;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -54,6 +59,16 @@ public class DiscoverMoviesFragment extends Fragment {
     private MovieItemAdapter mMoviePosterAdapter;
 
     /**
+     * Contains the list of movie items.
+     */
+    private ArrayList<MovieItem> mListOfMovies;
+
+    /**
+     * Movie list key to use when saving state of the activity.
+     */
+    private static final String MOVIE_LIST_KEY = "MOVIE_LIST_KEY";
+
+    /**
      * Default constructor.
      */
     public DiscoverMoviesFragment() {
@@ -64,11 +79,6 @@ public class DiscoverMoviesFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Fragment to handle menu events.
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
         // The MovieItemAdapter will take data from a source and
         // use it to populate the GridView it's attached to.
         mMoviePosterAdapter =
@@ -76,6 +86,23 @@ public class DiscoverMoviesFragment extends Fragment {
                         getActivity(), // The current context (this activity)
                         R.layout.grid_movie_item,
                         new ArrayList<MovieItem>());
+        if (savedInstanceState != null) {
+            mListOfMovies = (ArrayList<MovieItem>) savedInstanceState.get(MOVIE_LIST_KEY);
+            if (mListOfMovies != null) {
+                mMoviePosterAdapter.addAll(mListOfMovies);
+            }
+        } else {
+            mListOfMovies = new ArrayList<>();
+            updateMovies(PreferenceManager.getDefaultSharedPreferences(
+                    getActivity()).getString(
+                    getString(R.string.pref_sortBy_list_key),
+                    getString(R.string.pref_most_popular)));
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_discover_movies, container, false);
 
@@ -102,17 +129,35 @@ public class DiscoverMoviesFragment extends Fragment {
      *                 (for example: most popular, highest-rated)
      */
     private void updateMovies(String sortById) {
-        FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
-        fetchMoviesTask.execute(sortById);
+
+        if (isNetworkAvailable()) {
+            FetchMoviesTask fetchMoviesTask = new FetchMoviesTask();
+            fetchMoviesTask.execute(sortById);
+        } else {
+            Toast toast = Toast.makeText(
+                    getActivity(), R.string.error_msg_no_network, Toast.LENGTH_LONG);
+            toast.setGravity(Gravity.CENTER,0,0);
+            toast.show();
+        }
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        updateMovies(PreferenceManager.getDefaultSharedPreferences(
-                        getActivity()).getString(
-                        getString(R.string.pref_sortBy_list_key),
-                        getString(R.string.pref_most_popular)));
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList(MOVIE_LIST_KEY, mListOfMovies);
+    }
+
+    /**
+     * Checks if there is any network available.
+     * Based on a stackoverflow snippet.
+     *
+     * @return true if there is a network available, otherwise false.
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     /**
@@ -258,9 +303,11 @@ public class DiscoverMoviesFragment extends Fragment {
         protected void onPostExecute(ArrayList<MovieItem> result) {
             if (result != null) {
                 mMoviePosterAdapter.clear();
+                mListOfMovies.clear();
                 for (MovieItem movieItem : result) {
-                    mMoviePosterAdapter.add(movieItem);
+                    mListOfMovies.add(movieItem);
                 }
+                mMoviePosterAdapter.addAll(mListOfMovies);
             }
         }
     }

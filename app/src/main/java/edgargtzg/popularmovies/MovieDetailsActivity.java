@@ -95,31 +95,49 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 Bundle movieData = intent.getExtras();
                 MovieItem movieItem = movieData.getParcelable(
                         MovieItem.class.getCanonicalName());
+                if (movieItem != null) {
+                    String value;
+                    // Populates movie original title text view value.
+                    value = movieItem.getOriginalTitle();
+                    if (!(value.isEmpty())) {
+                        TextView originalTitleTextView =
+                                (TextView) rootView.findViewById(R.id.movie_title_textView);
+                        originalTitleTextView.setText(value);
+                    }
 
-                // Populates movie original title text view value.
-                TextView originalTitleTextView =
-                        (TextView) rootView.findViewById(R.id.movie_title_textView);
-                originalTitleTextView.setText(movieItem.getOriginalTitle());
+                    // Populates movie poster image.
+                    value = movieItem.getMoviePoster();
+                    if (!(value.isEmpty())) {
+                        ImageView moviePosterImageView =
+                                (ImageView) rootView.findViewById(R.id.movie_poster_imageView);
+                        Picasso.with(getActivity()).load(
+                                rootView.getResources().getString(R.string.details_poster_api_call) +
+                                        value).into(moviePosterImageView);
+                    }
 
-                // Populates movie poster image.
-                ImageView moviePosterImageView =
-                        (ImageView) rootView.findViewById(R.id.movie_poster_imageView);
-                Picasso.with(getActivity()).load(
-                        rootView.getResources().getString(R.string.details_poster_api_call) +
-                                movieItem.getMoviePoster()).into(moviePosterImageView);
-                // Populates movie plot synopsis.
-                TextView moviePlotTextView =
-                        (TextView) rootView.findViewById(R.id.movie_plot_textView);
-                moviePlotTextView.setText(movieItem.getPlotSynopsis());
+                    // Populates movie plot synopsis.
+                    value = movieItem.getPlotSynopsis();
+                    if (!(value.isEmpty())) {
+                        TextView moviePlotTextView =
+                                (TextView) rootView.findViewById(R.id.movie_plot_textView);
+                        moviePlotTextView.setText(value);
+                    }
 
-                // Populates movie user rating.
-                RatingBar movieRateBar = (RatingBar) rootView.findViewById(R.id.movie_ratingBar);
-                movieRateBar.setRating((Float.parseFloat(movieItem.getUserRating()) / 2));
+                    // Populates movie user rating.
+                    value = movieItem.getUserRating();
+                    if (!(value.isEmpty())) {
+                        RatingBar movieRateBar = (RatingBar) rootView.findViewById(R.id.movie_ratingBar);
+                        movieRateBar.setRating((Float.parseFloat(value) / 2));
+                    }
 
-                // Populates movie release date value.
-                TextView movieReleaseTextView =
-                        (TextView) rootView.findViewById(R.id.movie_release_textView);
-                movieReleaseTextView.setText(movieItem.getReleaseDate());
+                    // Populates movie release date value.
+                    value = movieItem.getReleaseDate();
+                    if (!(value.isEmpty())) {
+                        TextView movieReleaseTextView =
+                                (TextView) rootView.findViewById(R.id.movie_release_textView);
+                        movieReleaseTextView.setText(value);
+                    }
+                }
             }
             return rootView;
         }

@@ -38,4 +38,8 @@
     <string name="placeholder_movie_poster" translatable="true">Movie Poster</string>
     <string name="placeholder_movie_plot" translatable="true">Movie Poster</string>
 
+    <!-- Error message if there is no network available-->
+    <string name="error_msg_no_network" translatable="true">Oops, cannot access movies.
+        \nNo active network found.</string>
+
 </resources>
