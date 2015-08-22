@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_activity_layout);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new DiscoverMoviesFragment())
+                    .add(R.id.main_activity_container, new DiscoverMoviesFragment())
                     .commit();
         }
     }

@@ -53,11 +53,11 @@ public class DiscoverMoviesFragment extends Fragment {
         mMoviePosterAdapter =
                 new MovieItemAdapter(
                         getActivity(), // The current context (this activity)
-                        R.layout.movie_grid_item_imageview, // The name of the grid item ID.
+                        R.layout.grid_movie_item, // The name of the grid item ID.
                         new ArrayList<MovieItem>());
 
 
-        View rootView = inflater.inflate(R.layout.discover_movies_layout, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_discover_movies, container, false);
 
 
         // Get a reference to the GridView, and attach this adapter to it.

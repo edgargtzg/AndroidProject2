@@ -31,7 +31,7 @@ public class MovieItemAdapter extends ArrayAdapter{
 
         if(convertView == null) {
             LayoutInflater layoutInflater = ((Activity) mAdapterContext).getLayoutInflater();
-            convertView = layoutInflater.inflate(R.layout.movie_grid_item_imageview, parent, false);
+            convertView = layoutInflater.inflate(R.layout.grid_movie_item, parent, false);
         }
 
         ImageView imageView =  (ImageView) convertView.findViewById(

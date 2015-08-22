@@ -21,11 +21,15 @@
     <!-- Preference key for the Sort By list. -->
     <string name="pref_sortBy_list_key" translatable="false">list_preference</string>
     <!-- Preference title for the Sort By list. -->
-    <string name="pref_sortBy_list_title" translatable="true">Sort Order</string>
+    <string name="pref_sortBy_list_title" translatable="true">Sort by</string>
     <!-- Preference dialog title for the Sort By list. -->
     <string name="pref_sortBy_list_dialog_title" translatable="true">Movies</string>
 
     <!-- themoviedb API URL to retrieve movie poster image. -->
     <string name="themoviedb_poster_api_call" translatable="false">http://image.tmdb.org/t/p/w185/</string>
+
+    <!-- Title for the movie details activity-->
+    <string name="title_activity_movie_details" translatable="true">Movie Details</string>
+
 
 </resources>
