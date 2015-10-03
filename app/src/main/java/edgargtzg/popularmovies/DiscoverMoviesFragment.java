@@ -16,6 +16,7 @@
 
 package edgargtzg.popularmovies;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -192,6 +193,20 @@ public class DiscoverMoviesFragment extends Fragment
         private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
         /**
+         * Progress dialog when fetching movie data.
+         */
+        private ProgressDialog progressDialog;
+
+        /**
+         * Constructor.
+         */
+        public FetchMoviesTask() {
+
+            progressDialog = new ProgressDialog(getActivity());
+
+        }
+
+        /**
          * Extracts the movie items data from the JSON response from themoviedb.org API.
          *
          * @param movieDataJsonStr JSON response from themoviedb.org.
@@ -330,6 +345,16 @@ public class DiscoverMoviesFragment extends Fragment
                 }
                 mMoviePosterAdapter.addAll(mListOfMovies);
             }
+
+            if (progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog.setMessage("Loading Movies");
+            progressDialog.show();
         }
     }
 
