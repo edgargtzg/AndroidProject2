@@ -25,7 +25,7 @@
     <string name="pref_sortBy_list_dialog_title" translatable="true">Movies</string>
 
     <!-- themoviedb API URL to retrieve movie poster image for grid. -->
-    <string name="grid_poster_api_call" translatable="false">http://image.tmdb.org/t/p/w185/</string>
+    <string name="grid_poster_api_call" translatable="false">http://image.tmdb.org/t/p/w500/</string>
 
     <!-- themoviedb API URL to retrieve movie poster image for details fragment. -->
     <string name="details_poster_api_call" translatable="false">http://image.tmdb.org/t/p/w500/</string>
