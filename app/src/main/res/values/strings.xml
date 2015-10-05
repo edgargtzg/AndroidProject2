@@ -37,6 +37,7 @@
     <string name="placeholder_movie_release" translatable="true">Release Date</string>
     <string name="placeholder_movie_poster" translatable="true">Movie Poster</string>
     <string name="placeholder_movie_plot" translatable="true">Movie Poster</string>
+    <string name="placeholder_play_video" translatable="true">Play Video</string>
 
     <!-- Error message if there is no network available-->
     <string name="error_msg_no_network" translatable="true">Oops, cannot access movies.

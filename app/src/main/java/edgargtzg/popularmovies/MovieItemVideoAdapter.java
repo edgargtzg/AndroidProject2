@@ -22,23 +22,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-
-import com.squareup.picasso.Picasso;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 /**
- * Adapter to populate a view with movie items.
+ * Adapter to populate a view with movie video items.
  */
-public class MovieItemAdapter extends ArrayAdapter<MovieItem>{
+public class MovieItemVideoAdapter extends ArrayAdapter<MovieItemVideo>{
 
     private Context mAdapterContext;
-    private ArrayList<MovieItem> mMovieEntries;
+    private ArrayList<MovieItemVideo> mMovieVideoEntries;
 
-    public MovieItemAdapter(Context context, int gridItemId, ArrayList<MovieItem> movieEntries) {
-        super(context, gridItemId, movieEntries);
+    public MovieItemVideoAdapter(Context context, int listItemId, ArrayList<MovieItemVideo> movieVideoEntries) {
+        super(context, listItemId, movieVideoEntries);
         mAdapterContext = context;
-        mMovieEntries = movieEntries;
+        mMovieVideoEntries = movieVideoEntries;
     }
 
     @Override
@@ -46,20 +45,19 @@ public class MovieItemAdapter extends ArrayAdapter<MovieItem>{
 
         if(convertView == null) {
             LayoutInflater layoutInflater = ((Activity) mAdapterContext).getLayoutInflater();
-            convertView = layoutInflater.inflate(R.layout.grid_movie_item, parent, false);
+            convertView = layoutInflater.inflate(R.layout.list_video_movie_item, parent, false);
         }
 
-        ImageView imageView =  (ImageView) convertView.findViewById(
-                R.id.grid_item_movie_poster_imageview);
-        Picasso.with(mAdapterContext).load(
-                convertView.getResources().getString(R.string.grid_poster_api_call) +
-                mMovieEntries.get(position).getMoviePoster()).into(imageView);
+        TextView textView =  (TextView) convertView.findViewById(
+                R.id.list_video_movie_textview);
+
+        textView.setText(getItem(position).getVideoName());
 
         return convertView;
     }
 
     @Override
-    public MovieItem getItem(int position) {
-        return mMovieEntries.get(position);
+    public MovieItemVideo getItem(int position) {
+        return mMovieVideoEntries.get(position);
     }
 }

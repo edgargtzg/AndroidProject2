@@ -22,23 +22,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-
-import com.squareup.picasso.Picasso;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
 /**
- * Adapter to populate a view with movie items.
+ * Adapter to populate a view with movie review items.
  */
-public class MovieItemAdapter extends ArrayAdapter<MovieItem>{
+public class MovieItemReviewAdapter extends ArrayAdapter<MovieItemReview>{
 
     private Context mAdapterContext;
-    private ArrayList<MovieItem> mMovieEntries;
+    private ArrayList<MovieItemReview> mMovieReviewEntries;
 
-    public MovieItemAdapter(Context context, int gridItemId, ArrayList<MovieItem> movieEntries) {
-        super(context, gridItemId, movieEntries);
+    public MovieItemReviewAdapter(Context context, int gridItemId, ArrayList<MovieItemReview> movieReviewEntries) {
+        super(context, gridItemId, movieReviewEntries);
         mAdapterContext = context;
-        mMovieEntries = movieEntries;
+        mMovieReviewEntries = movieReviewEntries;
     }
 
     @Override
@@ -46,20 +45,22 @@ public class MovieItemAdapter extends ArrayAdapter<MovieItem>{
 
         if(convertView == null) {
             LayoutInflater layoutInflater = ((Activity) mAdapterContext).getLayoutInflater();
-            convertView = layoutInflater.inflate(R.layout.grid_movie_item, parent, false);
+            convertView = layoutInflater.inflate(R.layout.list_review_movie_item, parent, false);
         }
 
-        ImageView imageView =  (ImageView) convertView.findViewById(
-                R.id.grid_item_movie_poster_imageview);
-        Picasso.with(mAdapterContext).load(
-                convertView.getResources().getString(R.string.grid_poster_api_call) +
-                mMovieEntries.get(position).getMoviePoster()).into(imageView);
+        TextView textViewAuthor =  (TextView) convertView.findViewById(
+                R.id.list_review_movie_author_textview);
+        textViewAuthor.setText(getItem(position).getReviewAuthor());
+
+        TextView textViewContent =  (TextView) convertView.findViewById(
+                R.id.list_review_movie_content_textview);
+        textViewContent.setText(getItem(position).getReviewContent());
 
         return convertView;
     }
 
     @Override
-    public MovieItem getItem(int position) {
-        return mMovieEntries.get(position);
+    public MovieItemReview getItem(int position) {
+        return mMovieReviewEntries.get(position);
     }
 }

@@ -34,6 +34,11 @@ public class MovieItem implements Parcelable {
     private final String LOG_TAG = MovieItem.class.getSimpleName();
 
     /**
+     * Contains the movie ID.
+     */
+    private String mMovieId = "";
+
+    /**
      * Contains the movie original title.
      */
     private String mOriginalTitle = "";
@@ -68,6 +73,7 @@ public class MovieItem implements Parcelable {
      * @param in the parcel request.
      */
     protected MovieItem(Parcel in) {
+        mMovieId = in.readString();
         mOriginalTitle = in.readString();
         mMoviePoster = in.readString();
         mPlotSynopsis = in.readString();
@@ -98,6 +104,7 @@ public class MovieItem implements Parcelable {
     private void parseMovieData(JSONObject movieJsonObject) {
 
         // JSON keys to extract the data.
+        final String MOVIE_ID = "id";
         final String ORIGINAL_TITLE = "original_title";
         final String MOVIE_POSTER = "poster_path";
         final String PLOT_SYNOPSIS = "overview";
@@ -105,6 +112,7 @@ public class MovieItem implements Parcelable {
         final String RELEASE_DATE = "release_date";
 
         try {
+            mMovieId = movieJsonObject.get(MOVIE_ID).toString();
             mOriginalTitle = (String)movieJsonObject.get(ORIGINAL_TITLE);
             mMoviePoster = (String)movieJsonObject.get(MOVIE_POSTER);
             mPlotSynopsis = (String)movieJsonObject.get(PLOT_SYNOPSIS);
@@ -152,6 +160,15 @@ public class MovieItem implements Parcelable {
     }
 
     /**
+     * Gets the movie id.
+     *
+     * @return the movie id.
+     */
+    public String getmMovieId() {
+        return mMovieId;
+    }
+
+    /**
      * Gets the movie release date.
      *
      * @return the movie release date.
@@ -167,6 +184,7 @@ public class MovieItem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mMovieId);
         dest.writeString(mOriginalTitle);
         dest.writeString(mMoviePoster);
         dest.writeString(mPlotSynopsis);
