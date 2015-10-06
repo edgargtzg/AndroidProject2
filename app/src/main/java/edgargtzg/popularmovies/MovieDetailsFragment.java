@@ -196,20 +196,21 @@ public class MovieDetailsFragment extends Fragment {
 
             ListView videoListView = (ListView) rootView.findViewById(R.id.movie_details_videos_listview);
             videoListView.setAdapter(mMovieVideoAdapter);
+            // Adds play trailer using Youtube app or web browser.
             videoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                     MovieItemVideo videoItem = mMovieVideoAdapter.getItem(position);
-                    /*
-                    Intent intent = new Intent(getActivity(), MovieDetailsActivity.class)
-                            .putExtra(MovieItem.class.getCanonicalName(), videoItem);
+                    Intent intent = new Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse("http://www.youtube.com/watch?v=" + videoItem.getVideoKey()));
                     startActivity(intent);
-                    */
                 }
             });
 
             ListView reviewListView = (ListView) rootView.findViewById(R.id.movie_details_reviews_listview);
             reviewListView.setAdapter(mMovieReviewAdapter);
+            reviewListView.setEnabled(false);
         }
         return rootView;
     }
